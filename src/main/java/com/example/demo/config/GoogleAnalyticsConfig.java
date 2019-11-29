@@ -3,6 +3,7 @@ package com.example.demo.config;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -17,18 +18,20 @@ import com.google.api.services.analytics.AnalyticsScopes;
 @Configuration
 public class GoogleAnalyticsConfig {
 
+	@Autowired
+	private AppConfig appConfig;
+
 	@Bean
 	public Analytics analytics() throws GeneralSecurityException, IOException {
 		String applicationName = "googleAnalytics";
 		JacksonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-		String serviceAccountEmail = "xxx@gserviceaccount.com";
 		String keyFileLocation = "/credential.p12";
 
 		NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 		GoogleCredential credential = new GoogleCredential.Builder()
 				.setTransport(httpTransport)
 				.setJsonFactory(jsonFactory)
-				.setServiceAccountId(serviceAccountEmail)
+				.setServiceAccountId(appConfig.getGaMail())
 				.setServiceAccountPrivateKeyFromP12File(
 						new ClassPathResource(keyFileLocation).getFile())
 				.setServiceAccountScopes(AnalyticsScopes.all())
